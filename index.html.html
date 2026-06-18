@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="LoanFit — Free home loan eligibility checker. Know which banks and NBFCs will approve your loan before applying.">
+<meta name="keywords" content="home loan eligibility India, CIBIL score check, SBI HDFC home loan, NBFC loan approval">
+<title>LoanFit — Home Loan Eligibility Checker India</title>
+<style>
+:root {
+  --green:#1a7a4a; --green-d:#0f4c2a; --green-l:#e8f5ee; --green-m:#2d9e63;
+  --amber:#b45309; --amber-l:#fef3c7;
+  --red:#b91c1c; --red-l:#fee2e2;
+  --blue:#1d4ed8; --blue-l:#eff6ff;
+  --text:#111827; --muted:#6b7280; --border:#e5e7eb;
+  --bg:#f3f4f6; --white:#fff;
+  --r:10px; --r-sm:7px;
+  --shadow:0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 1.25rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.logo{font-size:17px;font-weight:700;color:var(--green);letter-spacing:-.3px}
+.logo span{color:var(--text);font-weight:400}
+.lang-pills{display:flex;gap:5px}
+.lp{font-size:12px;padding:4px 11px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--muted);cursor:pointer;font-weight:500;transition:all .15s;font-family:inherit}
+.lp.active{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0f4c2a 0%,#1a7a4a 55%,#2d9e63 100%);color:#fff;padding:2.5rem 1.25rem 2rem;text-align:center}
+.hero h1{font-size:clamp(20px,4vw,32px);font-weight:700;margin-bottom:8px;letter-spacing:-.4px}
+.hero p{font-size:14px;opacity:.85;max-width:460px;margin:0 auto 1.25rem}
+.trust-row{display:flex;justify-content:center;gap:1.25rem;flex-wrap:wrap}
+.trust-badge{font-size:12px;opacity:.9;display:flex;align-items:center;gap:5px}
+.trust-badge::before{content:'✓';background:rgba(255,255,255,.2);border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+
+/* STEPS BAR */
+.steps-bar{background:var(--white);border-bottom:1px solid var(--border);padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:center;gap:0}
+.step{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted)}
+.step.active{color:var(--green)}
+.step.done{color:var(--green);opacity:.6}
+.step-num{width:22px;height:22px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.step.active .step-num{background:var(--green);color:#fff;border-color:var(--green)}
+.step.done .step-num{background:var(--green-l);color:var(--green)}
+.step-sep{width:28px;height:1px;background:var(--border);margin:0 4px}
+
+/* MAIN */
+.main{max-width:820px;margin:0 auto;padding:1.25rem}
+
+/* CARDS */
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow-md);padding:1.5rem;margin-bottom:1.25rem;border:1px solid var(--border)}
+.card-title{font-size:14px;font-weight:600;margin-bottom:1.1rem;display:flex;align-items:center;gap:7px;color:var(--text)}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:1.1rem}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select{height:40px;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:0 11px;font-size:14px;color:var(--text);background:var(--white);outline:none;transition:border-color .15s;font-family:inherit;width:100%}
+.field input:focus,.field select:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(26,122,74,.1)}
+.field input::placeholder{color:#d1d5db}
+
+/* BUTTONS */
+.btn-primary{width:100%;height:44px;background:var(--green);color:#fff;border:none;border-radius:var(--r-sm);font-size:15px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s;font-family:inherit}
+.btn-primary:hover{background:var(--green-d)}
+.btn-primary:active{transform:scale(.99)}
+.btn-secondary{height:40px;padding:0 20px;background:transparent;color:var(--green);border:1.5px solid var(--green);border-radius:var(--r-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-secondary:hover{background:var(--green-l)}
+
+/* RESULTS */
+.results-summary{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.summary-pills{display:flex;gap:7px;flex-wrap:wrap}
+.pill{font-size:12px;font-weight:600;padding:4px 11px;border-radius:20px}
+.pill-g{background:var(--green-l);color:var(--green)}
+.pill-a{background:var(--amber-l);color:var(--amber)}
+.pill-r{background:var(--red-l);color:var(--red)}
+.sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:1.1rem 0 7px;padding-left:2px}
+
+/* LENDER CARDS */
+.lcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem 1.25rem;margin-bottom:9px;box-shadow:var(--shadow);transition:box-shadow .15s}
+.lcard:hover{box-shadow:var(--shadow-md)}
+.lcard.sanction{border-left:3px solid var(--green)}
+.lcard.review{border-left:3px solid #d97706}
+.lcard.reject{border-left:3px solid var(--red)}
+.lcard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px}
+.lname{font-size:14px;font-weight:600}
+.ltype{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.3px;margin-top:2px}
+.sbadge{font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.sb-s{background:var(--green-l);color:var(--green)}
+.sb-r{background:var(--amber-l);color:var(--amber)}
+.sb-x{background:var(--red-l);color:var(--red)}
+.conds{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.crow{display:flex;align-items:flex-start;gap:7px;font-size:13px;line-height:1.5}
+.cicon{width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;margin-top:2px}
+.ci-p{background:var(--green-l);color:var(--green)}
+.ci-w{background:var(--amber-l);color:var(--amber)}
+.ci-f{background:var(--red-l);color:var(--red)}
+.ctext{color:#374151}
+.lcard-foot{display:flex;gap:18px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.meta{display:flex;flex-direction:column;gap:2px}
+.mlabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.mval{font-size:13px;font-weight:600}
+
+/* LEAD FORM */
+.lead-banner{background:linear-gradient(135deg,var(--blue-l),#e0f2fe);border:1px solid #bfdbfe;border-radius:var(--r);padding:1.25rem 1.5rem;margin-top:1.5rem;margin-bottom:1.25rem}
+.lead-banner h3{font-size:15px;font-weight:600;color:#1e3a8a;margin-bottom:4px}
+.lead-banner p{font-size:13px;color:#1d4ed8;margin-bottom:1rem;opacity:.85}
+.lead-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:10px}
+
+/* SUCCESS STATE */
+.success-box{background:var(--green-l);border:1px solid #86efac;border-radius:var(--r);padding:1.5rem;text-align:center}
+.success-box h3{color:var(--green);font-size:16px;margin-bottom:6px}
+.success-box p{font-size:13px;color:#166534}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty h3{font-size:15px;color:var(--text);margin-bottom:5px}
+.empty p{font-size:13px}
+
+/* ADMIN NOTICE */
+.admin-notice{background:#fffbeb;border:1px solid #fcd34d;border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:#92400e;margin-bottom:1.25rem;line-height:1.6}
+.admin-notice strong{display:block;margin-bottom:2px}
+
+footer{text-align:center;padding:1.75rem;font-size:12px;color:var(--muted);border-top:1px solid var(--border);margin-top:2rem}
+footer strong{color:var(--text)}
+
+@media(max-width:480px){
+  .form-grid,.lead-grid{grid-template-columns:1fr}
+  .hero{padding:2rem 1rem 1.5rem}
+  .card{padding:1.1rem}
+  .trust-row{gap:.75rem}
+  .step-label{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Loan<span>Fit</span> 🏠</div>
+  <div class="lang-pills">
+    <button class="lp active" onclick="setLang('en',this)">EN</button>
+    <button class="lp" onclick="setLang('hi',this)">हिन्दी</button>
+    <button class="lp" onclick="setLang('pu',this)">ਪੰਜਾਬੀ</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1 id="hero-h">Will your home loan get approved?</h1>
+  <p id="hero-p">Check instantly which banks &amp; NBFCs will sanction your file — based on real policies. Free, no registration.</p>
+  <div class="trust-row">
+    <span class="trust-badge" id="tb1">5 lenders checked instantly</span>
+    <span class="trust-badge" id="tb2">Real rejection reasons explained</span>
+    <span class="trust-badge" id="tb3">100% free, no login needed</span>
+  </div>
+</div>
+
+<div class="steps-bar">
+  <div class="step active" id="s1"><div class="step-num">1</div><span class="step-label" id="sl1">Your Profile</span></div>
+  <div class="step-sep"></div>
+  <div class="step" id="s2"><div class="step-num">2</div><span class="step-label" id="sl2">See Results</span></div>
+  <div class="step-sep"></div>
+  <div class="step" id="s3"><div class="step-num">3</div><span class="step-label" id="sl3">Get Expert Help</span></div>
+</div>
+
+<div class="main">
+
+  <!-- ── STEP 1: PROFILE FORM ── -->
+  <div id="step1-area">
+    <div class="card">
+      <div class="card-title">📋 <span id="ft">Enter your loan profile</span></div>
+      <div class="form-grid">
+        <div class="field"><label id="l-cibil">CIBIL Score</label><input type="number" id="cibil" min="300" max="900" placeholder="e.g. 720"></div>
+        <div class="field"><label id="l-income">Monthly Income (₹)</label><input type="number" id="income" placeholder="e.g. 50,000"></div>
+        <div class="field"><label id="l-loan">Loan Amount (₹)</label><input type="number" id="loan" placeholder="e.g. 30,00,000"></div>
+        <div class="field">
+          <label id="l-emp">Employment Type</label>
+          <select id="emp">
+            <option value="">Select</option>
+            <option value="salaried">Salaried</option>
+            <option value="self_emp_profit">Self-Employed (With ITR)</option>
+            <option value="self_emp_loss">Self-Employed (Low / Loss ITR)</option>
+            <option value="cash">Cash Income / No ITR</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-prop">Property Type</label>
+          <select id="prop">
+            <option value="">Select</option>
+            <option value="ready">Ready to Move Flat</option>
+            <option value="under">Under Construction</option>
+            <option value="resale">Resale Flat</option>
+            <option value="plot">Plot Only</option>
+            <option value="plot_construct">Plot + Construction</option>
+            <option value="lal_dora">Lal Dora / Village Property</option>
+          </select>
+        </div>
+        <div class="field"><label id="l-age">Applicant Age</label><input type="number" id="age" min="18" max="70" placeholder="e.g. 35"></div>
+      </div>
+      <button class="btn-primary" id="check-btn" onclick="checkEligibility()">Check My Eligibility →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: RESULTS ── -->
+  <div id="results-area">
+    <div class="empty">
+      <div class="empty-icon">🏦</div>
+      <h3 id="empty-h">Results will appear here</h3>
+      <p id="empty-p">Fill in your profile above and tap the button</p>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: LEAD CAPTURE ── -->
+  <div id="lead-area" style="display:none">
+    <div class="lead-banner">
+      <h3 id="lead-h">📞 Want expert guidance for free?</h3>
+      <p id="lead-p">Our home loan specialist will call you, review your profile, and help you get the best deal.</p>
+      <div class="lead-grid">
+        <div class="field"><label id="ll-name">Your Name</label><input type="text" id="lead-name" placeholder="Full name"></div>
+        <div class="field"><label id="ll-phone">Mobile Number</label><input type="tel" id="lead-phone" placeholder="10-digit number" maxlength="10"></div>
+        <div class="field"><label id="ll-city">City</label><input type="text" id="lead-city" placeholder="e.g. Ludhiana"></div>
+      </div>
+      <button class="btn-primary" id="lead-btn" onclick="submitLead()" style="max-width:280px">
+        <span id="lead-btn-text">Get Free Callback →</span>
+      </button>
+      <p style="font-size:11px;color:#1d4ed8;margin-top:8px;opacity:.7" id="lead-privacy">We never share your number. No spam.</p>
+    </div>
+  </div>
+
+  <!-- ── LEAD SUCCESS ── -->
+  <div id="lead-success" style="display:none">
+    <div class="success-box">
+      <div style="font-size:32px;margin-bottom:8px">✅</div>
+      <h3 id="success-h">You're all set!</h3>
+      <p id="success-p">Our specialist will call you within 24 hours to discuss your home loan options.</p>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<footer>
+  <p><strong>LoanFit</strong> — For informational purposes only. Final approval depends on lender's credit policy and discretion.</p>
+  <p style="margin-top:5px">Built for home loan professionals &amp; customers in India 🇮🇳</p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// 🔧 CONFIGURATION — Edit this section to manage your product
+// ═══════════════════════════════════════════════════════════
+
+// STEP A: After you create a Google Form for leads, paste the
+// form action URL here (instructions in the setup guide below)
+const GOOGLE_FORM_ACTION = "YOUR_GOOGLE_FORM_URL_HERE";
+const FORM_FIELDS = {
+  name:    "entry.XXXXXXXXX",   // Replace with your form field IDs
+  phone:   "entry.XXXXXXXXX",
+  city:    "entry.XXXXXXXXX",
+  cibil:   "entry.XXXXXXXXX",
+  income:  "entry.XXXXXXXXX",
+  loan:    "entry.XXXXXXXXX",
+  result:  "entry.XXXXXXXXX",
+};
+
+// ═══════════════════════════════════════════════════════════
+// LENDER POLICIES — Add or edit lenders here
+// Each lender = one object in this array
+// ═══════════════════════════════════════════════════════════
+const LENDERS = [
+  {
+    name:"SBI Home Loans", type:"Bank",
+    rate:"8.50–9.15%", tenure:"30 yrs", ltv:"90%",
+    check(p){
+      let issues=[],pass=[];
+      if(p.cibil>=750) pass.push({msg:"CIBIL "+p.cibil+" meets SBI's 750+ requirement"});
+      else if(p.cibil>=700) issues.push({type:'warn',msg:"CIBIL "+p.cibil+" — SBI prefers 750+; file will go to manual credit review"});
+      else issues.push({type:'fail',msg:"CIBIL "+p.cibil+" is below SBI's minimum of 700"});
+      if(p.emp==='cash') issues.push({type:'fail',msg:"Cash income not accepted — ITR is mandatory for SBI"});
+      else if(p.emp==='self_emp_loss') issues.push({type:'warn',msg:"Low/loss ITR — 3 years of returns required; eligible amount may be reduced"});
+      else pass.push({msg:"Employment type accepted by SBI"});
+      if(p.prop==='lal_dora') issues.push({type:'fail',msg:"Lal Dora / village property not financed by SBI"});
+      else if(p.prop==='plot') issues.push({type:'warn',msg:"Plot-only: SBI requires construction within 2 years"});
+      else pass.push({msg:"Property type eligible under SBI norms"});
+      const foir=(p.loan/240)/p.income;
+      if(foir>0.50) issues.push({type:'warn',msg:"EMI-to-income ratio ~"+Math.round(foir*100)+"% — SBI FOIR limit is 50%"});
+      else pass.push({msg:"Income-to-EMI ratio within SBI's 50% FOIR limit"});
+      if(p.age>60) issues.push({type:'warn',msg:"Age "+p.age+" — co-applicant may be needed for longer tenure"});
+      const f=issues.filter(i=>i.type==='fail'),w=issues.filter(i=>i.type==='warn');
+      return{status:f.length?'reject':w.length?'review':'sanction',issues:[...issues,...pass.map(m=>({type:'pass',...m}))]};
+    }
+  },
+  {
+    name:"HDFC Bank", type:"Bank",
+    rate:"8.70–9.40%", tenure:"30 yrs", ltv:"90%",
+    check(p){
+      let issues=[],pass=[];
+      if(p.cibil>=700) pass.push({msg:"CIBIL "+p.cibil+" acceptable for HDFC"});
+      else if(p.cibil>=650) issues.push({type:'warn',msg:"CIBIL "+p.cibil+" — HDFC may ask for higher down payment margin"});
+      else issues.push({type:'fail',msg:"CIBIL below HDFC's minimum of 650"});
+      if(p.emp==='cash') issues.push({type:'fail',msg:"Formal income proof (salary slip / ITR) is mandatory for HDFC"});
+      else if(p.emp==='self_emp_loss') issues.push({type:'warn',msg:"Low ITR — HDFC may reduce eligibility or ask for co-applicant"});
+      else pass.push({msg:"Employment profile accepted by HDFC"});
+      if(p.prop==='lal_dora') issues.push({type:'fail',msg:"Clear title required — Lal Dora property not financed by HDFC"});
+      else if(p.prop==='plot') issues.push({type:'warn',msg:"Plot-only: construction must begin within 2 years"});
+      else pass.push({msg:"Property type accepted by HDFC"});
+      const foir=(p.loan/240)/p.income;
+      if(foir>0.55) issues.push({type:'warn',msg:"EMI-to-income ratio ~"+Math.round(foir*100)+"% — may exceed HDFC's FOIR limit"});
+      else pass.push({msg:"Income sufficient for requested loan amount"});
+      const f=issues.filter(i=>i.type==='fail');
+      return{status:f.length?'reject':issues.filter(i=>i.type==='warn').length?'review':'sanction',issues:[...issues,...pass.map(m=>({type:'pass',...m}))]};
+    }
+  },
+  {
+    name:"LIC Housing Finance", type:"NBFC",
+    rate:"8.65–9.50%", tenure:"30 yrs", ltv:"90%",
+    check(p){
+      let issues=[],pass=[];
+      if(p.cibil>=650) pass.push({msg:"CIBIL "+p.cibil+" meets LIC HFL's 650+ requirement"});
+      else issues.push({type:'fail',msg:"CIBIL below LIC HFL minimum of 650"});
+      if(p.emp==='cash') issues.push({type:'warn',msg:"Cash income — may be accepted with 12-month bank statement + field verification"});
+      else if(p.emp==='self_emp_loss') issues.push({type:'warn',msg:"Low/loss ITR — income assessed via banking turnover"});
+      else pass.push({msg:"Income documentation acceptable for LIC HFL"});
+      if(p.prop==='lal_dora') issues.push({type:'warn',msg:"Lal Dora property — local municipal approval needed; case-by-case"});
+      else pass.push({msg:"Property eligible under LIC HFL norms"});
+      if(p.age>65) issues.push({type:'fail',msg:"Max age exceeded — LIC HFL closes file at 75 (only "+(75-p.age)+" yrs tenure available)"});
+      else pass.push({msg:"Age "+p.age+" within LIC HFL's eligible range"});
+      const f=issues.filter(i=>i.type==='fail');
+      return{status:f.length?'reject':issues.filter(i=>i.type==='warn').length?'review':'sanction',issues:[...issues,...pass.map(m=>({type:'pass',...m}))]};
+    }
+  },
+  {
+    name:"Aadhar Housing Finance", type:"NBFC",
+    rate:"11.00–15.00%", tenure:"25 yrs", ltv:"85%",
+    check(p){
+      let issues=[],pass=[];
+      if(p.cibil<550) pass.push({msg:"Low CIBIL accepted — Aadhar HFC specialises in first-time / low-credit borrowers"});
+      else pass.push({msg:"CIBIL "+p.cibil+" well above Aadhar HFC's threshold"});
+      if(p.emp==='cash') pass.push({msg:"Cash income accepted with 12-month bank statement + field income verification"});
+      else if(p.emp==='self_emp_loss') pass.push({msg:"Low ITR accepted — income assessed via banking turnover"});
+      else pass.push({msg:"Employment profile suitable for Aadhar HFC"});
+      if(p.prop==='lal_dora') pass.push({msg:"Lal Dora / village property accepted with local authority NOC"});
+      else pass.push({msg:"Property type eligible for Aadhar HFC"});
+      if(p.loan>5000000) issues.push({type:'fail',msg:"Aadhar HFC max ticket is ₹50L for informal income segment"});
+      else pass.push({msg:"Loan amount within Aadhar HFC's eligible range"});
+      const f=issues.filter(i=>i.type==='fail');
+      return{status:f.length?'reject':'sanction',issues:[...issues,...pass.map(m=>({type:'pass',...m}))]};
+    }
+  },
+  {
+    name:"PNB Housing Finance", type:"NBFC",
+    rate:"8.75–12.00%", tenure:"30 yrs", ltv:"90%",
+    check(p){
+      let issues=[],pass=[];
+      if(p.cibil>=611) pass.push({msg:"CIBIL "+p.cibil+" meets PNB HFL cutoff of 611"});
+      else issues.push({type:'fail',msg:"CIBIL below PNB HFL minimum cutoff of 611"});
+      if(p.emp==='cash') issues.push({type:'warn',msg:"Cash income — PNB HFL may consider with strong 12-month bank statement"});
+      else if(p.emp==='self_emp_loss') issues.push({type:'warn',msg:"Low/loss ITR — eligible amount may be reduced"});
+      else pass.push({msg:"Employment type accepted by PNB HFL"});
+      if(p.prop==='lal_dora') issues.push({type:'fail',msg:"Lal Dora / unapproved property not accepted by PNB HFL"});
+      else pass.push({msg:"Property eligible under PNB HFL norms"});
+      const foir=(p.loan/240)/p.income;
+      if(foir>0.55) issues.push({type:'warn',msg:"EMI-to-income ratio ~"+Math.round(foir*100)+"% — may need co-applicant"});
+      else pass.push({msg:"Income-to-EMI ratio acceptable for PNB HFL"});
+      const f=issues.filter(i=>i.type==='fail');
+      return{status:f.length?'reject':issues.filter(i=>i.type==='warn').length?'review':'sanction',issues:[...issues,...pass.map(m=>({type:'pass',...m}))]};
+    }
+  }
+];
+
+// ═══════════════════════════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════════════════════════
+const T={
+  en:{
+    heroH:"Will your home loan get approved?",
+    heroP:"Check instantly which banks & NBFCs will sanction your file — based on real policies. Free, no registration.",
+    tb1:"5 lenders checked instantly",tb2:"Real rejection reasons explained",tb3:"100% free, no login needed",
+    ft:"Enter your loan profile",
+    lCibil:"CIBIL Score",lIncome:"Monthly Income (₹)",lLoan:"Loan Amount (₹)",lEmp:"Employment Type",lProp:"Property Type",lAge:"Applicant Age",
+    btn:"Check My Eligibility →",
+    sl1:"Your Profile",sl2:"See Results",sl3:"Get Expert Help",
+    fillAll:"Please fill all fields before checking.",
+    secS:"Likely to Sanction",secR:"Manual Review Likely",secX:"Likely to Reject",
+    bS:"✓ Likely Sanction",bR:"⚠ Manual Review",bX:"✗ Likely Reject",
+    rateL:"Interest Rate",tenureL:"Max Tenure",ltvL:"Max LTV",
+    emptyH:"Results will appear here",emptyP:"Fill in your profile above and tap the button",
+    leadH:"📞 Want expert guidance for free?",
+    leadP:"Our home loan specialist will call you, review your profile, and help you get the best deal.",
+    llName:"Your Name",llPhone:"Mobile Number",llCity:"City",
+    leadBtn:"Get Free Callback →",
+    leadPrivacy:"We never share your number. No spam.",
+    successH:"You're all set!",
+    successP:"Our specialist will call you within 24 hours to discuss your home loan options.",
+    resLabel:"Your results",
+  },
+  hi:{
+    heroH:"क्या आपका होम लोन मंजूर होगा?",
+    heroP:"तुरंत जानें कौन से बैंक और NBFC आपकी फाइल मंजूर करेंगे — असली नीतियों के आधार पर। निःशुल्क।",
+    tb1:"5 लेंडर्स तुरंत जांचे जाते हैं",tb2:"असली अस्वीकृति कारण दिखाए जाते हैं",tb3:"100% मुफ्त, कोई लॉगिन नहीं",
+    ft:"अपनी जानकारी भरें",
+    lCibil:"सिबिल स्कोर",lIncome:"मासिक आय (₹)",lLoan:"लोन राशि (₹)",lEmp:"रोजगार प्रकार",lProp:"संपत्ति प्रकार",lAge:"आवेदक की आयु",
+    btn:"पात्रता जांचें →",
+    sl1:"आपकी जानकारी",sl2:"परिणाम देखें",sl3:"विशेषज्ञ सहायता",
+    fillAll:"जांच से पहले सभी जानकारी भरें।",
+    secS:"स्वीकृति संभव",secR:"समीक्षा आवश्यक",secX:"अस्वीकृति संभव",
+    bS:"✓ स्वीकृति संभव",bR:"⚠ समीक्षा ज़रूरी",bX:"✗ अस्वीकृति संभव",
+    rateL:"ब्याज दर",tenureL:"अधिकतम अवधि",ltvL:"अधिकतम LTV",
+    emptyH:"आपके परिणाम यहाँ दिखेंगे",emptyP:"ऊपर जानकारी भरें और बटन दबाएं",
+    leadH:"📞 मुफ्त विशेषज्ञ सहायता चाहिए?",
+    leadP:"हमारा होम लोन विशेषज्ञ आपसे संपर्क करेगा और सबसे अच्छा सौदा दिलाने में मदद करेगा।",
+    llName:"आपका नाम",llPhone:"मोबाइल नंबर",llCity:"शहर",
+    leadBtn:"मुफ्त कॉलबैक पाएं →",
+    leadPrivacy:"हम आपका नंबर कभी साझा नहीं करते।",
+    successH:"धन्यवाद!",
+    successP:"हमारा विशेषज्ञ 24 घंटों में आपसे संपर्क करेगा।",
+    resLabel:"आपके परिणाम",
+  },
+  pu:{
+    heroH:"ਕੀ ਤੁਹਾਡਾ ਹੋਮ ਲੋਨ ਮਨਜ਼ੂਰ ਹੋਵੇਗਾ?",
+    heroP:"ਤੁਰੰਤ ਜਾਣੋ ਕਿਹੜੇ ਬੈਂਕ ਅਤੇ NBFC ਤੁਹਾਡੀ ਫਾਈਲ ਮਨਜ਼ੂਰ ਕਰਨਗੇ — ਅਸਲ ਨੀਤੀਆਂ ਦੇ ਆਧਾਰ 'ਤੇ।",
+    tb1:"5 ਲੈਂਡਰ ਤੁਰੰਤ ਜਾਂਚੇ ਜਾਂਦੇ ਹਨ",tb2:"ਅਸਲ ਰੱਦ ਕਰਨ ਦੇ ਕਾਰਨ ਦੱਸੇ ਜਾਂਦੇ ਹਨ",tb3:"100% ਮੁਫਤ, ਕੋਈ ਲੌਗਇਨ ਨਹੀਂ",
+    ft:"ਆਪਣੀ ਜਾਣਕਾਰੀ ਭਰੋ",
+    lCibil:"ਸਿਬਿਲ ਸਕੋਰ",lIncome:"ਮਾਸਿਕ ਆਮਦਨ (₹)",lLoan:"ਲੋਨ ਰਕਮ (₹)",lEmp:"ਰੁਜ਼ਗਾਰ ਕਿਸਮ",lProp:"ਜਾਇਦਾਦ ਕਿਸਮ",lAge:"ਉਮਰ",
+    btn:"ਯੋਗਤਾ ਜਾਂਚੋ →",
+    sl1:"ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ",sl2:"ਨਤੀਜੇ ਦੇਖੋ",sl3:"ਮਾਹਰ ਮਦਦ",
+    fillAll:"ਜਾਂਚ ਤੋਂ ਪਹਿਲਾਂ ਸਾਰੀ ਜਾਣਕਾਰੀ ਭਰੋ।",
+    secS:"ਮਨਜ਼ੂਰੀ ਸੰਭਵ",secR:"ਸਮੀਖਿਆ ਜ਼ਰੂਰੀ",secX:"ਅਸਵੀਕਾਰੀ ਸੰਭਵ",
+    bS:"✓ ਮਨਜ਼ੂਰੀ ਸੰਭਵ",bR:"⚠ ਸਮੀਖਿਆ ਲੋੜੀਦੀ",bX:"✗ ਅਸਵੀਕਾਰੀ ਸੰਭਵ",
+    rateL:"ਵਿਆਜ ਦਰ",tenureL:"ਵੱਧ ਮਿਆਦ",ltvL:"ਵੱਧ LTV",
+    emptyH:"ਤੁਹਾਡੇ ਨਤੀਜੇ ਇੱਥੇ ਦਿਖਣਗੇ",emptyP:"ਉੱਪਰ ਜਾਣਕਾਰੀ ਭਰੋ ਅਤੇ ਬਟਨ ਦਬਾਓ",
+    leadH:"📞 ਮੁਫਤ ਮਾਹਰ ਮਦਦ ਚਾਹੀਦੀ ਹੈ?",
+    leadP:"ਸਾਡਾ ਹੋਮ ਲੋਨ ਮਾਹਰ ਤੁਹਾਨੂੰ ਕਾਲ ਕਰੇਗਾ ਅਤੇ ਸਭ ਤੋਂ ਵਧੀਆ ਸੌਦਾ ਦਿਲਾਉਣ ਵਿੱਚ ਮਦਦ ਕਰੇਗਾ।",
+    llName:"ਤੁਹਾਡਾ ਨਾਮ",llPhone:"ਮੋਬਾਈਲ ਨੰਬਰ",llCity:"ਸ਼ਹਿਰ",
+    leadBtn:"ਮੁਫਤ ਕਾਲਬੈਕ ਪਾਓ →",
+    leadPrivacy:"ਅਸੀਂ ਤੁਹਾਡਾ ਨੰਬਰ ਕਦੇ ਸਾਂਝਾ ਨਹੀਂ ਕਰਦੇ।",
+    successH:"ਤੁਸੀਂ ਤਿਆਰ ਹੋ!",
+    successP:"ਸਾਡਾ ਮਾਹਰ 24 ਘੰਟਿਆਂ ਵਿੱਚ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗਾ।",
+    resLabel:"ਤੁਹਾਡੇ ਨਤੀਜੇ",
+  }
+};
+
+let currentLang='en';
+let lastProfile={};
+let lastResults={sanctioned:[],review:[],rejected:[]};
+
+function setLang(l,btn){
+  currentLang=l;
+  document.querySelectorAll('.lp').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyLang();
+}
+
+function applyLang(){
+  const t=T[currentLang];
+  const ids={
+    'hero-h':'heroH','hero-p':'heroP','tb1':'tb1','tb2':'tb2','tb3':'tb3',
+    'ft':'ft','l-cibil':'lCibil','l-income':'lIncome','l-loan':'lLoan',
+    'l-emp':'lEmp','l-prop':'lProp','l-age':'lAge','check-btn':'btn',
+    'sl1':'sl1','sl2':'sl2','sl3':'sl3',
+    'empty-h':'emptyH','empty-p':'emptyP',
+    'lead-h':'leadH','lead-p':'leadP',
+    'll-name':'llName','ll-phone':'llPhone','ll-city':'llCity',
+    'lead-btn-text':'leadBtn','lead-privacy':'leadPrivacy',
+    'success-h':'successH','success-p':'successP',
+  };
+  Object.entries(ids).forEach(([id,key])=>{
+    const el=document.getElementById(id);
+    if(el && t[key]) el.textContent=t[key];
+  });
+}
+
+function setStep(n){
+  [1,2,3].forEach(i=>{
+    const s=document.getElementById('s'+i);
+    s.className='step'+(i<n?' done':i===n?' active':'');
+  });
+}
+
+function checkEligibility(){
+  const t=T[currentLang];
+  const cibil=parseInt(document.getElementById('cibil').value)||0;
+  const income=parseInt(document.getElementById('income').value)||0;
+  const loan=parseInt(document.getElementById('loan').value)||0;
+  const emp=document.getElementById('emp').value;
+  const prop=document.getElementById('prop').value;
+  const age=parseInt(document.getElementById('age').value)||0;
+  const el=document.getElementById('results-area');
+
+  if(!income||!loan||!emp||!prop||!age){
+    el.innerHTML=`<div class="card"><p style="color:var(--red);font-size:13px">⚠ ${t.fillAll}</p></div>`;
+    return;
+  }
+
+  lastProfile={cibil,income,loan,emp,prop,age};
+  const sanctioned=[],review=[],rejected=[];
+  LENDERS.forEach(lender=>{
+    const result=lender.check(lastProfile);
+    const entry={lender,result};
+    if(result.status==='sanction') sanctioned.push(entry);
+    else if(result.status==='review') review.push(entry);
+    else rejected.push(entry);
+  });
+  lastResults={sanctioned,review,rejected};
+
+  let html=`<div class="results-summary">
+    <div style="font-size:14px;font-weight:600">${t.resLabel}</div>
+    <div class="summary-pills">
+      ${sanctioned.length?`<span class="pill pill-g">✓ ${sanctioned.length} ${t.secS}</span>`:''}
+      ${review.length?`<span class="pill pill-a">⚠ ${review.length} ${t.secR}</span>`:''}
+      ${rejected.length?`<span class="pill pill-r">✗ ${rejected.length} ${t.secX}</span>`:''}
+    </div>
+  </div>`;
+
+  if(sanctioned.length){html+=`<div class="sec-label">${t.secS} (${sanctioned.length})</div>`;sanctioned.forEach(e=>html+=renderCard(e,'sanction',t));}
+  if(review.length){html+=`<div class="sec-label">${t.secR} (${review.length})</div>`;review.forEach(e=>html+=renderCard(e,'review',t));}
+  if(rejected.length){html+=`<div class="sec-label">${t.secX} (${rejected.length})</div>`;rejected.forEach(e=>html+=renderCard(e,'reject',t));}
+
+  el.innerHTML=html;
+  document.getElementById('lead-area').style.display='block';
+  document.getElementById('lead-success').style.display='none';
+  setStep(2);
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderCard(entry,status,t){
+  const{lender,result}=entry;
+  const bc=status==='sanction'?'sb-s':status==='review'?'sb-r':'sb-x';
+  const bt=status==='sanction'?t.bS:status==='review'?t.bR:t.bX;
+  const lc=status==='sanction'?'sanction':status==='review'?'review':'reject';
+  let ch='';
+  result.issues.forEach(issue=>{
+    const ic=issue.type==='pass'?'ci-p':issue.type==='warn'?'ci-w':'ci-f';
+    const ix=issue.type==='pass'?'✓':issue.type==='warn'?'!':'✗';
+    ch+=`<div class="crow"><div class="cicon ${ic}">${ix}</div><span class="ctext">${issue.msg}</span></div>`;
+  });
+  return `<div class="lcard ${lc}">
+    <div class="lcard-top">
+      <div><div class="lname">${lender.name}</div><div class="ltype">${lender.type}</div></div>
+      <span class="sbadge ${bc}">${bt}</span>
+    </div>
+    <div class="conds">${ch}</div>
+    <div class="lcard-foot">
+      <div class="meta"><div class="mlabel">${t.rateL}</div><div class="mval">${lender.rate}</div></div>
+      <div class="meta"><div class="mlabel">${t.tenureL}</div><div class="mval">${lender.tenure}</div></div>
+      <div class="meta"><div class="mlabel">${t.ltvL}</div><div class="mval">${lender.ltv}</div></div>
+    </div>
+  </div>`;
+}
+
+function submitLead(){
+  const name=document.getElementById('lead-name').value.trim();
+  const phone=document.getElementById('lead-phone').value.trim();
+  const city=document.getElementById('lead-city').value.trim();
+  if(!name||phone.length<10||!city){
+    alert('Please fill in your name, a valid 10-digit mobile number, and city.');
+    return;
+  }
+  const resultSummary=`Sanction:${lastResults.sanctioned.map(e=>e.lender.name).join(',')||'none'} | Review:${lastResults.review.map(e=>e.lender.name).join(',')||'none'} | Reject:${lastResults.rejected.map(e=>e.lender.name).join(',')||'none'}`;
+  // Submit to Google Form (works even cross-origin via no-cors)
+  if(GOOGLE_FORM_ACTION && GOOGLE_FORM_ACTION!=="YOUR_GOOGLE_FORM_URL_HERE"){
+    const formData=new FormData();
+    formData.append(FORM_FIELDS.name,name);
+    formData.append(FORM_FIELDS.phone,phone);
+    formData.append(FORM_FIELDS.city,city);
+    formData.append(FORM_FIELDS.cibil,lastProfile.cibil||'');
+    formData.append(FORM_FIELDS.income,lastProfile.income||'');
+    formData.append(FORM_FIELDS.loan,lastProfile.loan||'');
+    formData.append(FORM_FIELDS.result,resultSummary);
+    fetch(GOOGLE_FORM_ACTION,{method:'POST',body:formData,mode:'no-cors'}).catch(()=>{});
+  }
+  // Always show success (Google Forms no-cors doesn't return response)
+  document.getElementById('lead-area').style.display='none';
+  document.getElementById('lead-success').style.display='block';
+  setStep(3);
+  document.getElementById('lead-success').scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║           LOANFIT SETUP GUIDE — READ THIS FIRST             ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║  STEP 1 — HOST THE FILE                                      ║
+║  Upload this file to GitHub Pages or tiiny.host              ║
+║                                                              ║
+║  STEP 2 — SET UP GOOGLE FORM (for leads)                     ║
+║  a) Go to forms.google.com → Create new form                 ║
+║  b) Add fields: Name, Phone, City, CIBIL, Income,            ║
+║     Loan Amount, Result Summary                              ║
+║  c) Click the 3-dot menu → Get pre-filled link               ║
+║  d) Fill dummy data, copy the URL from browser               ║
+║  e) That URL base = your GOOGLE_FORM_ACTION                  ║
+║  f) Entry IDs = the entry.XXXXXXXXX values in the URL        ║
+║  g) Paste both into the CONFIGURATION section above          ║
+║                                                              ║
+║  STEP 3 — CONNECT TO GOOGLE SHEETS                           ║
+║  a) In your Google Form → Responses tab → Sheets icon        ║
+║  b) All leads automatically go to a Google Sheet             ║
+║  c) You see: Name, Phone, City, CIBIL, Loan Amount,          ║
+║     which banks sanctioned/rejected — all in one sheet       ║
+║                                                              ║
+║  STEP 4 — GET WHATSAPP ALERTS (optional, free)              ║
+║  a) In Google Sheets → Extensions → Apps Script              ║
+║  b) Paste a simple script to email you on each new row       ║
+║  c) You get notified instantly when a lead comes in          ║
+║                                                              ║
+║  ADDING NEW BANKS — just edit the LENDERS array above        ║
+║  Copy any lender block, change the name/policies/rates       ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+</body>
+</html>
